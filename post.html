@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OpenBlunder</title>
+
+    <!--css 코드-->
+    <link type = "text/css" rel="stylesheet" href="tempDesign.css">
+
+
+    <!-- 부트스트랩 코드-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar navbar-default">
+        <div class="container">
+        <div class= "navbar-header ">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>                        
+            </button>
+            <a class="navbar-brand" href="OpenBlunderHome.html">OpenBlunder</a>
+        </div>
+
+        <!-- 로그인 회원가입 버튼 -->
+        <div class = "buttons navbar-right" >
+          <ul class="nav navbar-nav">
+            <li><a href="login.html" >Login</a></li>
+            <li><a href="signUp.html">Sign Up</a></li>
+          </ul>
+        </div>
+
+        <!-- 메뉴바 -->
+        <div class="collapse navbar-collapse navbar-right" id="myNavbar">
+            <ul class="nav navbar-nav">
+            <li><a href="board.html">게시판</a></li>
+            <li><a href="blunder.html">블런더</a></li>
+            <li><a href="quiz.html">퀴즈</a></li>
+            </ul>
+        </div>
+        </div>
+    </nav>
+
+
+    <section class = "fluid-container " style="margin: auto; padding-top : 20px; width : 80%; 
+    height : 100%;  border-radius: 10px; border: 1px solid #c9c9c9; position: relative;">
+      
+        <div style ="display: flex; justify-content: space-between; align-items: center; padding: 5% 10% 0% 10%;">
+                <a id = "postName" href = "board.html">
+                    <span style = "font-size : 30px;"> 게시글 제목  </span>
+                </a>
+                <div id = "createInfo">
+                    <span id = "date"> Date : 2025-05-19</span><span> &nbsp;/&nbsp; </span>
+                    <span id = "creater"> 게시글 작성자 : 김모모 </span>
+                </div>
+        </div>
+        
+        
+        <hr style = "width: 80%;  border: 1px solid #c9c9c9;">
+
+        <div style = " padding : 0% 10% 5% 10%; ">
+            <p style = "font-size : 20px;"> 게시글 내용 </p>
+            <p>게시글 내용을 여기에 작성하세요.</p>
+        </div>
+            
+        <hr style = "width: 80%;  border: 1px solid #c9c9c9;">
+
+        <div class = "row"  style = "width: 95%; padding : 0% 10% 0% 10%">
+            <div id = "comments" class = "col-sm-11" >
+
+            </div>
+            <div style="position: absolute; right: 10%;">
+                <input type = "button" value = "댓글 작성하기" onclick ="addNote()">
+            </div>
+            
+        </div>
+
+        <br><br>
+    
+    </section>
+    
+
+  <!--하단 관련정보-->
+  <footer>
+    <br>
+    <hr style = "width: 50%; margin: auto; border: 1px solid #c9c9c9;">
+    <br>
+        <div class="container text-center">
+            <p>© 2025 OpenBlunder. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+    const colors = ["#f9ffe9", "#fff3e9", "#e9ffed","#e9f4ff", "#f5e9ff"];
+    
+
+    function addNote() {
+        const board = document.getElementById("comments");
+        const note = document.createElement("div");
+        note.className = "note";
+        note.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+
+        const title = document.createElement("h4");
+        title.textContent = "New Note";
+        note.appendChild(title);
+
+        const content = document.createElement("Textarea");
+        content.placeholder = "Write something...";
+        content.style.width = "80%";
+        note.appendChild(content);
+
+        const delBtn = document.createElement("Button");
+        delBtn.className = "delete-btn";
+        delBtn.style.padding_right = "10%";
+        delBtn.textContent = "취소";
+        delBtn.style.color = "red";
+
+        const fixBtn = document.createElement("Button");
+        fixBtn.className = "fix-btn";
+        fixBtn.textContent = "완료";
+        fixBtn.style.color = "Green";
+
+        fixBtn.addEventListener("click", function () {
+            
+            const fixedContent = document.createElement("p");
+            fixedContent.textContent = content.value;
+            fixedContent.style.width = "80%";
+            fixedContent.style.height = "auto";
+
+            fixedContent.style.left = "5%"; 
+
+            note.removeChild(delBtn);
+            note.removeChild(fixBtn);
+
+            note.removeChild(content);
+            note.appendChild(fixedContent);
+        });
+
+        delBtn.addEventListener("click", function () {
+            board.removeChild(note);
+        });
+
+        note.appendChild(fixBtn);
+        note.appendChild(delBtn);
+        board.appendChild(note);
+    }
+    </script>
+
+</body>
+</html>
