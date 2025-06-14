@@ -7,55 +7,152 @@
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chessground@9.2.1/assets/chessground.base.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chessground@9.2.1/assets/chessground.brown.css" />
   <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/chessground@9.2.1/assets/chessground.cburnett.css" />
-  <style>
-    body {
-      font-family: sans-serif;
-      margin: 20px;
-      display: flex;
-      gap: 30px;
-    }
-	#board {
-	  width: 100%;
-	  max-width: 400px;
-	  aspect-ratio: 1 / 1;
-	}
-    .info-panel {
-      flex: 1;
-    }
-    .box {
-      border: 1px solid #ccc;
-      padding: 10px;
-      margin-bottom: 15px;
-      border-radius: 8px;
-      background: #f9f9f9;
-    }
-    .scroll-box {
-      max-height: 200px;
-      overflow-y: auto;
-    }
-    .move-box {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 10px;
-    }
-    .move-box div {
-      background-color: #e0e0ff;
-      padding: 5px 10px;
-      border-radius: 5px;
-    }
-    button {
-      margin-top: 10px;
-      padding: 5px 10px;
-    }
-    .board-container {
-	  width: 100%;
-	  max-width: 400px;
-	}
-  </style>
+  
+  	<meta name="viewport" content="width=device-width, initial-scale=1">
+	<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+	<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+	<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+  
+  
+<style>
+  body {
+    font-family: sans-serif;
+
+  }
+
+  .main-flex-container {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    gap: 40px;
+    margin-top: 30px;
+  }
+
+  .board-container {
+    width: 100%;
+    max-width: 400px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px;
+  }
+
+  #board {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border: 1px solid #ccc;
+  }
+
+  #resetBtn {
+    padding: 8px 16px;
+    font-size: 14px;
+    background-color: lightgray;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+
+  .info-panel {
+    flex: 0 0 500px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .box {
+    background: #f9f9f9;
+    padding: 15px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+  }
+
+  .scroll-box {
+    max-height: 200px;
+    overflow-y: auto;
+  }
+
+  .move-box {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .move-box div {
+    background-color: #e0e0ff;
+    padding: 5px 10px;
+    border-radius: 5px;
+  }
+
+  /* navbar form fix */
+  .navbar-nav > li > form {
+    display: flex;
+    align-items: center;
+    margin: 0;
+    padding: 0;
+    height: 100%;
+  }
+
+  .buttons.navbar-right ul.nav.navbar-nav {
+    display: flex;
+    align-items: center;
+    height: 100%;
+  }
+  
+  
+      
+  footer {
+            background-color: #f2f2f2;
+  
+  }
+</style>
+
 </head>
 <body>
+<nav class="navbar navbar-default">
+  <div class="container">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>                        
+      </button>
+      <a class="navbar-brand" th:href="${user != null} ? @{/home} : @{/guest}">OpenBlunder</a>
+    </div>
+
+    <!-- 로그인 회원가입 버튼 -->
+    <div class="buttons navbar-right">
+      <ul class="nav navbar-nav" style="display: flex; align-items: center; height: 100%;">
+        <li th:if="${user != null and user.profilePhoto != null}">
+          <a th:href="@{/profile}">
+            <img th:src="@{/assets/{file}(file=${user.profilePhoto})}" style="height: 30px; width: 30px;" />
+          </a>
+        </li>
+        <li th:if="${user != null}" style="display: flex; align-items: center; margin-left: 10px;">
+          <p style="margin: 0;">logined as: <span th:text="${user.username}"></span></p>
+        </li>
+        <li th:if="${user != null}" style="margin-left: 10px;">
+          <a th:href="@{/logout}">Logout</a>
+        </li>
+      </ul>
+    </div>
+
+    <!-- 메뉴바 -->
+    <div class="collapse navbar-collapse navbar-right" id="myNavbar">
+      <ul class="nav navbar-nav">
+        <li><a th:href="@{/posts}">게시판</a></li>
+        <li><a th:href="@{/practice}">블런더</a></li>
+        <li><a th:href="@{/quiz}">퀴즈</a></li>
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<div class="main-flex-container">
   <div class="board-container">
     <div id="board"></div>
+    <button id="resetBtn">리셋</button>
   </div>
 
   <div class="info-panel">
@@ -73,9 +170,10 @@
       <h3>현재 기보</h3>
       <div id="pgnDisplay"></div>
     </div>
-
-    <button id="resetBtn">리셋</button>
   </div>
+</div>
+
+
 
   <script type="module">
     import { Chessground } from "https://cdn.jsdelivr.net/npm/chessground@9.2.1/dist/chessground.min.js";
@@ -161,6 +259,43 @@
       updateOpeningList();
     });
   </script>
+  
+<br>
+    
+<br>
+<br>
+
+  <!--하단 관련정보-->
+    <footer class="container-fluid bg-3">
+        <h2 class="text-center">CONTACT</h2>
+        <div class="row">
+          <div class="col-sm-5">
+            <p>Contact us and we'll get back to you within 24 hours.</p>
+            <p><span class="glyphicon glyphicon-map-marker"></span> Cheongju, South Korea</p>
+            <p><span class="glyphicon glyphicon-phone"></span> +00 1515151515</p>
+            <p><span class="glyphicon glyphicon-envelope"></span> myemail@something.com</p>
+            <p><a href = "example.html">For detailed info, click here</a></p>
+          </div>
+          <div class="col-sm-7">
+            <div class="row">
+              <div class="col-sm-6 form-group">
+                <input class="form-control" id="name" name="name" placeholder="Name" type="text" required>
+              </div>
+              <div class="col-sm-6 form-group">
+                <input class="form-control" id="email" name="email" placeholder="Email" type="email" required>
+              </div>
+            </div>
+            <textarea class="form-control" id="comments" name="comments" placeholder="Comment" rows="5"></textarea><br>
+            <div class="row">
+              <div class="col-sm-12 form-group">
+                <button class="btn btn-default pull-right" type="submit">Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </footer>
+    
+  
 </body>
 </html>
 

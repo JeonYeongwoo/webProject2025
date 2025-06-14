@@ -15,11 +15,12 @@ CREATE TABLE user (
     password VARCHAR(255) NOT NULL,
     email VARCHAR(100) UNIQUE NOT NULL,
     nation VARCHAR(50),
-    profile_photo VARCHAR(255),
+    profile_photo VARCHAR(255) DEFAULT '3.jpg',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     correct INT DEFAULT 0,
     incorrect INT DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
 
 -- 포스트 테이블
 CREATE TABLE post (
@@ -60,4 +61,19 @@ CREATE TABLE comment (
     FOREIGN KEY (user_id) REFERENCES user(id) ON DELETE CASCADE,
     FOREIGN KEY (post_id) REFERENCES post(id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+
+--결국 트리거로 , 처리했음 
+DELIMITER //
+
+CREATE TRIGGER clean_email_before_insert
+BEFORE INSERT ON user
+FOR EACH ROW
+BEGIN
+    SET NEW.email = REPLACE(NEW.email, ',', '');
+END;
+//
+
+DELIMITER ;
 

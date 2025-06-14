@@ -2,32 +2,422 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <title>Guest Index</title>
+    
+    <link type = "text/css" rel="stylesheet" href="/css/tempDesign.css">
+
+
+    <!-- 부트스트랩 코드-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <style>
+      .bg-1{
+            position: relative;
+            top : 0 ; left : 0 ; right : 0 ; 
+            height: 100vh;  ;
+            width: auto;
+            background-image: url('/assets/chess.jpg'); 
+            background-size: cover;             
+            background-position: center;        
+            background-repeat: no-repeat;    
+            
+        }
+
+        .todayBlunder{
+            border: 0px; 
+            text-align:left;
+            border-radius: 10px; 
+            height : 100%; 
+            width: 25%;
+            text-align: center
+            
+        }
+
+        #ranking{
+            font-size: 15px;
+        }
+
+        #ranking tr:nth-child(even){
+            background-color: #dcdcdc;
+        }
+
+        #ranking table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-bottom: 20px;
+        }
+    
+        #ranking th, td {
+          padding: 10px;
+          border: 1px solid #ccc;
+          text-align: center;
+          border : 0px;
+        }
+    
+        #ranking th {
+          background-color: #f2f2f2;
+          
+        }
+        .abcd{
+          border : 0px;
+        }
+        div #col_1, #col_2{
+          display: inline-block;
+          vertical-align: top;
+          width: 50%;
+          border : 0px;
+        }
+
+        #board table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-bottom: 20px;
+        }
+    
+        #board td:nth-child(2) {
+          text-align:left;
+        }
+
+        #board th, td {
+          padding: 10px;
+          border: 1px solid #ccc;
+          text-align: center;
+          border : 0px;
+        }
+    
+        #board th {
+          background-color: #f2f2f2;
+          
+        }
+        #board th:nth-child(2) {
+          text-align:left;
+        }
+        
+        .navbar-nav > li > form {
+  			display: flex;
+  			align-items: center; /* 세로 중앙 정렬 */
+  			margin: 0;            /* 기본 여백 제거 */
+  			padding: 0;           /* 필요시 패딩도 제거 */
+  			height: 100%;
+		}
+		
+		.image-container img {
+		  display: block;
+		  width: 300px;
+		  height: auto;
+		}
+		
+		.image-container .static {
+		  display: block;
+		}
+		
+		.image-container .animated {
+		  display: none;
+		}
+		
+		.image-container:hover .static {
+		  display: none;
+		}
+		
+		.image-container:hover .animated {
+		  display: block;
+		}
+    </style>
 </head>
 <body>
-    <h1>Guest Page</h1>
+    
 
-    <form th:action="@{/signup}" method="get">
-        <button type="submit">회원가입</button>
-    </form>
+    
+    <div class="bg-1" >
+      <nav class="navbar navbar-default"  >
+          <div class="container">
+          <div class= "navbar-header ">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>                        
+              </button>
+              <a class="navbar-brand" th:href="(${user != null}) ? @{/home} : @{/guest}">OpenBlunder</a>
+          </div>
 
-    <a th:href="@{/login}">Login</a>
-    <br><br>
-    <a th:href="@{/posts}">게시글 목록 보기</a>  <!-- 추가 -->
+          <!-- 로그인 회원가입 버튼 -->
+          <div class="buttons navbar-right">
+			  <ul class="nav navbar-nav" style="display: flex; align-items: center; height: 100%;">
+			    <li><a th:href="@{/login}">Login</a></li>
+			    <li style="margin-left: 10px;">
+			      <form th:action="@{/signup}" method="get" style="margin: 0;">
+			        <button type="submit" class="btn btn-default" style="margin: 0; padding: 6px 12px;">회원가입</button>
+			      </form>
+			    </li>
+			  </ul>
+			</div>
+
+          <!-- 메뉴바 -->
+          <div class="collapse navbar-collapse navbar-right" id="myNavbar">
+              <ul class="nav navbar-nav">
+                <li><a th:href="@{/posts}">게시판</a></li>
+                <li><a th:href="@{/practice}">블런더</a></li>
+                <li><a th:href="@{/quiz}">퀴즈</a></li>
+              </ul>
+          </div>
+          </div>
+      </nav>
+
+      </div>
+
+      <br><br>
+    <!-- 중앙 컨텐츠 관련 -->
+    <section style="margin: auto; padding-top : 20px; width : 80%; 
+    height : 1000px;  border-radius: 10px; border: 1px solid #c9c9c9;  text-align:center;">
+
+      <h1 style = "color : #c9c9c9; margin: 0 auto"><b>Welcome to OpenBlunder</b></h1>
+       
+      <br>
+      <div id = "col_1" class = "col-sm-6" style = "height : 850px; text-align:left;
+      	 border-radius: 10px; background-color : white;">
+      	<div id = "board" style = "height :800px; border: 1px solid #c9c9c9; text-align:left;border-radius: 10px;background-color : white;">
+    	<div style="width: 90%; margin: 0 auto;">
+	      
+		     <div class = "row"  style = "margin: 0 auto; height : 30%; text-align:center; border-radius: 10px; ">
+		        <div>
+			        <h2 style = "border: 2px solid #c9c9c9; border-radius: 10px; text-align:center; margin: 5px 5px;">
+			            🚩대기 중인 게임방🚩 
+				    </h2>
+					<div class="row" id="waitingRooms" style="margin: 0 auto;  height: 250px; text-align:center; border-radius: 10px;"></div>
+					
+					
+				</div>
+				
+				<div style="padding: 20px; border-top: 1px solid #ccc; margin-top: 20px;">
+					<div style="text-align:center; margin-top: 10px;">
+						<button id="loadLessBtn" style="display:none; padding: 8px 16px; border-radius: 6px; background-color: #007bff; color: white; border: none;">이전 4개 보기</button>
+						<button id="loadMoreBtn" style="display:none; padding: 8px 16px; border-radius: 6px; background-color: #007bff; color: white; border: none;">다음 4개 보기</button>
+					</div>
+
+
+					<br>
+				  <form onsubmit="location.href='/login'; return false;"  method="post">
+			        <input type="text" name="roomName" placeholder="방 이름" />
+			        <input type="hidden" name="roomPass" placeholder="비밀번호 (선택)" />
+			        <input type="hidden" name="hostUserId" />
+			        <button type="submit">방 만들기</button>
+			    </form>
+				</div>
+	        </div>
+  
+		</div>
+		
+		<div class = "row"  style = "display: flex; margin: 5px auto; height : 500px; text-align:center; border-radius: 10px; gap: 20px;">
+		    <div id = "practice" class = "col-sm-6" style = "height : 330px; border: 1px solid #c9c9c9; text-align:left;border-radius: 10px;background-color : white;">
+	          <a th:href="@{/practice}">
+	          <h2 style = "border: 2px solid #c9c9c9; border-radius: 10px; text-align:center;margin: 5px 5px;">
+	            오프닝 연습</h2>
+	            </a>
+	            
+	            <a th:href="@{/practice}"style="text-align:center;">
+	          	<div style="display: flex; justify-content: center;  height: 100%;">
+			            <img style = "width : 200px; height: 200px; border-radius : 10px"src="/assets/ChessSet.jpg" class="static" alt="Static image">
+			    </div>
+			    </a>
+	          <hr>
+	    	</div>
+	        
+	        <div id="quiz" class = "col-sm-6" style="height :330px; border: 1px solid #c9c9c9; text-align:center; border-radius: 10px; background-color: white;">
+			    <a th:href="@{/quiz}">
+			        <h2 style="border: 2px solid #c9c9c9; border-radius: 10px; text-align:center;margin: 5px 5px;">
+			            퀴즈
+			        </h2>
+			    </a>
+			    <a th:href="@{/quiz}" style="text-align:center;">
+			        <div class="image-container" style="display: flex; justify-content: center;  height: 100%;">
+			            <img style = "width :  200px; height:  200px;" src="/assets/Blunder.png" class="static" alt="Static image">
+			            <img style = "width :  200px; height:  200px;" src="/assets/Blunder.gif" class="animated" alt="Animated gif">
+			        </div>
+			    </a>
+			</div>
+		</div> 
+
+		</div>
+		
+		
+   </div>
+
+  <div id = "col_2" class = "col-sm-6" style = "height : 850px; text-align:left; border-radius: 10px;background-color : white;" >
+	<div id = "board" style = "height :380px; border: 1px solid #c9c9c9; text-align:left;border-radius: 10px;background-color : white;">
+    <div style="width: 90%; margin: 0 auto;">      
+      <a th:href="@{/posts}"><h2 style = "border: 2px solid #c9c9c9; border-radius: 10px; text-align:center;margin: 5px 5px;">
+                            ?? 이달의 인기 블런더 ??</h2></a>
+			    <table style="width: 100%; border-collapse: collapse;">
+				    <thead>
+				        <tr style="background-color: #f2f2f2;">
+				            <th style="text-align:center; width: 60%; ">제목</th>
+				            <th style="text-align: left;">Likes ♥</th>
+				            <th style="text-align: left;">작성자</th>
+				        </tr>
+	    			</thead>
+				    <tbody>
+				        <tr th:each="post : ${topPosts}" style="border-bottom: 1px solid #ddd;">
+				            <td style="padding: 8px; text-align:center; ">
+				                <a th:href="@{'/posts/' + ${post.id}}" th:text="${post.title}">제목</a>
+				            </td>
+				            <td style="padding: 8px; text-align: center;" th:text="${post.likeCount}">0</td>
+				            <td style="padding: 8px;" th:text="${post.user.username}">작성자</td>
+				        </tr>
+				    </tbody>
+				</table>
+          </div>
+        </div>
+
+
+        <br>
+
+  <div id = "ranking"
+          style = "height :380px; border: 1px solid #c9c9c9; text-align:center; border-radius: 10px;background-color : white; padding-top: 10px; text-align:center;
+                        margin: 0 auto;" >
+        <div style="width: 90%; margin: 0 auto;">
+            <h2 style = "text-align:left; color:grey;">&nbsp;&nbsp;랭킹</h2>
+            <table style = "width: 100%;margin: 0 auto;">
+              <thead>
+                    <tr>
+                      <th style = "width:20%">랭킹</th>
+                      <th style = "width:70%">Name</th>
+                      <th style = "width:10%">Points</th>
+                    </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                      <td>1</td> <td>홍길동</td> <td>100</td>
+                    </tr>
+                    <tr>
+                      <td>2</td> <td>김영우</td> <td>90</td>
+                    </tr>
+                    <tr>
+                      <td>3</td> <td>이순신</td> <td>80</td>
+                    </tr>
+                    <tr>
+                      <td>4</td> <td></td> <td></td>
+                    </tr>
+                    <tr>
+                      <td>5</td> <td></td> <td></td>
+                    </tr>
+                    <tr>
+                      <td></td> <td>...</td> <td></td>
+                    </tr>
+                </tbody>
+              </table>
+            </div>
+          <hr>
+      </div>
+  </section>
+
+    <br>
     
+
+  <!--하단 관련정보-->
+    <footer class="container-fluid bg-3">
+        <h2 class="text-center">CONTACT</h2>
+        <div class="row">
+          <div class="col-sm-5">
+            <p>Contact us and we'll get back to you within 24 hours.</p>
+            <p><span class="glyphicon glyphicon-map-marker"></span> Cheongju, South Korea</p>
+            <p><span class="glyphicon glyphicon-phone"></span> +00 1515151515</p>
+            <p><span class="glyphicon glyphicon-envelope"></span> myemail@something.com</p>
+            <p><a href = "example.html">For detailed info, click here</a></p>
+          </div>
+          <div class="col-sm-7">
+            <div class="row">
+              <div class="col-sm-6 form-group">
+                <input class="form-control" id="name" name="name" placeholder="Name" type="text" required>
+              </div>
+              <div class="col-sm-6 form-group">
+                <input class="form-control" id="email" name="email" placeholder="Email" type="email" required>
+              </div>
+            </div>
+            <textarea class="form-control" id="comments" name="comments" placeholder="Comment" rows="5"></textarea><br>
+            <div class="row">
+              <div class="col-sm-12 form-group">
+                <button class="btn btn-default pull-right" type="submit">Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </footer>
     
-<div>
-    <h2>🔥 이달의 인기 포스트 (최근 3일)</h2>
-    <ul>
-        <li th:each="post : ${topPosts}">
-            <a th:href="@{'/posts/' + ${post.id}}" th:text="${post.title}">제목</a>
-            <span> (♥ <span th:text="${post.likeCount}"></span>)</span>
-        </li>
-    </ul>
-</div>
+	  
+
+    <script>
+    let allRooms = [];       // 전체 방 목록
+    let currentIndex = 0;    // 현재 시작 인덱스 (0, 4, 8, ...)
+
+    async function loadWaitingRooms() {
+        const res = await fetch('/chess/waiting-rooms');
+        allRooms = await res.json();
+        currentIndex = 0;
+
+        renderCurrentPage();
+    }
+
+    function renderCurrentPage() {
+        const container = document.getElementById('waitingRooms');
+        const loadLessBtn = document.getElementById('loadLessBtn');
+        const loadMoreBtn = document.getElementById('loadMoreBtn');
+
+        container.innerHTML = '';  // 기존 방 제거
+
+        const nextRooms = allRooms.slice(currentIndex, currentIndex + 4);
+        nextRooms.forEach(room => {
+            const col = document.createElement('div');
+            col.className = 'col-sm-3';
+            col.style = `
+                height: 100%;
+                text-align: center;
+                border-radius: 10px;
+                background-color: white;
+                margin-bottom: 20px;
+            `;
+
+            col.innerHTML = `
+                <h4>${room.roomName}</h4>
+                <img src="/assets/lookingForOpponent.png" style="width: 100%; height: auto; object-fit: cover; border-radius: 10px;" />
+                <form method="post" action="/chess/room/${room.id}/join" style="margin-top: 10px;">
+                    <button type="submit" style="padding: 6px 12px; border-radius: 6px; background-color: #4CAF50; color: white; border: none;">참가</button>
+                </form>
+            `;
+
+            container.appendChild(col);
+        });
+
+        // 다음 4개가 없으면 버튼 숨김
+        if (currentIndex + 4 >= allRooms.length) {
+            loadMoreBtn.style.display = 'none';
+        } else {
+            loadMoreBtn.style.display = 'inline-block';
+        }
+        
+        if (currentIndex - 4 < 0) {
+            loadLessBtn.style.display = 'none';
+        } else {
+            loadLessBtn.style.display = 'inline-block';
+        }
+    }
+
+    // 버튼 클릭 시 다음 페이지로
+    document.getElementById('loadMoreBtn').addEventListener('click', () => {
+        currentIndex += 4;
+        renderCurrentPage();
+    });
     
-    
-    
-    
+    document.getElementById('loadLessBtn').addEventListener('click', () => {
+        currentIndex -= 4;
+        renderCurrentPage();
+    });
+
+    window.onload = loadWaitingRooms;
+</script>
+
     
 </body>
 </html>

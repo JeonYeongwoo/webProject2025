@@ -2,39 +2,224 @@
 <html>
 <head>
     <title>게시글 리스트</title>
+    
+    <link type = "text/css" rel="stylesheet" href="/css/tempDesign.css">
+
+
+    <!-- 부트스트랩 코드-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+
+    <style>
+        body {
+          font-family: Arial, sans-serif;
+        }
+    
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin-bottom: 20px;
+        }
+    
+        th, td {
+          padding: 10px;
+          border: 1px solid #ccc;
+          text-align: center;
+          border : 0px;
+        }
+    
+        th {
+          background-color: #f2f2f2;
+          
+        }
+		#Posts {
+		  display: flex;
+		  flex-direction: column;
+		  justify-content: space-between; 
+		  min-height: 550px;
+		}
+		
+		.bottom-bar {
+		  margin-top: auto; 
+		  padding-top: 20px;
+		  border-top: 1px solid #ddd;
+		}
+
+    
+        #postCreate {
+          padding: 5px 10px;
+          background-color: #8f8f8f;
+          color: white;
+          border: none;
+          border-radius: 4px;
+          cursor: pointer;
+        }
+    
+        .btn:hover {
+          background-color: #ffffff;
+        }
+    
+        .top-bar {
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 10px;
+        }
+        .move {
+          color : black;
+          
+        }
+      </style>
 </head>
 <body>
-<h1>게시글 리스트</h1>
+		<nav class="navbar navbar-default"  >
+          <div class="container">
+          <div class= "navbar-header ">
+              <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>
+              <span class="icon-bar"></span>                        
+              </button>
+              <a class="navbar-brand" th:href="(${user != null}) ? @{/home} : @{/guest}">OpenBlunder</a>
+          </div>
 
-<a href="/posts/create">새 글 작성</a>
-<table border="1">
-    <thead>
-        <tr>
-            <th>제목</th>
-            <th>작성자</th>
-            <th>작성일</th>
-            <th>조회</th>
-        </tr>
-    </thead>
-    <tbody>
-        <tr th:each="post : ${postsPage.content}">
-            <td><a th:href="@{'/posts/' + ${post.id}}" th:text="${post.title}">제목</a></td>
-            <td th:text="${post.user.username}">작성자</td>
-            <td th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</td>
-            <td th:text="${post.likeCount}">좋아요</td>
-        </tr>
-    </tbody>
-</table>
+          <!-- 로그인 상태일 때 -->
+			<div class="buttons navbar-right" th:if="${user != null}">
+			  <ul class="nav navbar-nav" style="display: flex; align-items: center;">
+			    <li>
+			      <a th:href = "@{/profile}"><img th:src="@{/assets/{file}(file=${user.profilePhoto})}" style="height: 30px; width: 30px;"></a>
+			    </li>
+			    <li style="display: flex; align-items: center; margin-left: 10px;">
+			      <p style="margin: 0;">logined as: <span th:text="${user.username}"></span></p>
+			    </li>
+			    <li style="margin-left: 10px;">
+			      <a th:href="@{/logout}">Logout</a>
+			    </li>
+			  </ul>
+			</div>
+			
+			<!-- 비로그인 상태일 때 -->
+			<div class="buttons navbar-right" th:unless="${user != null}">
+			  <ul class="nav navbar-nav" style="display: flex; align-items: center;">
+			    <li><a th:href="@{/login}">Login</a></li>
+			    <li style="margin-left: 10px;">
+			      <form th:action="@{/signup}" method="get" style="margin: 0;">
+			        <button type="submit" class="btn btn-default" style="margin: 0; padding: 6px 12px;">회원가입</button>
+			      </form>
+			    </li>
+			  </ul>
+			</div>
 
-<div>
-    <span th:text="'페이지: ' + ${currentPage + 1}">페이지</span>
-    <div>
-        <a th:if="${currentPage > 0}" th:href="@{/posts(page=${currentPage - 1})}">이전</a>
-        <a th:if="${postsPage.hasNext()}" th:href="@{/posts(page=${currentPage + 1})}">다음</a>
-    </div>
-</div>
+          <!-- 메뉴바 -->
+          <div class="collapse navbar-collapse navbar-right" id="myNavbar">
+              <ul class="nav navbar-nav">
+                <li><a th:href="@{/posts}">게시판</a></li>
+                <li><a th:href="@{/practice}">블런더</a></li>
+                <li><a th:href="@{/quiz}">퀴즈</a></li>
+              </ul>
+          </div>
+          </div>
+      </nav>
 
-<a th:href="(${user != null}) ? @{/home} : @{/guest}">뒤로가기</a>
+
+    <section id = "Posts" class = "fluid-container " style="margin: auto; padding-top : 5px; width : 80%; 
+                height : 100%;  border-radius: 10px; border: 1px solid #c9c9c9; text-align: center;">
+                
+        <div class = "container" style="padding : 2% 5% 2% 5%;">
+           
+            <div style ="display: flex; justify-content: space-between; align-items: center; ">
+              
+                  <span style = "width:70%; text-align: left; color : grey;"><h1>&nbsp;&nbsp;게시판</h1></span>
+                
+              
+               
+               <div id = "createInfo">
+                    <span style = "text-align: right;"><a href="/posts/create"><button id="postCreate" >글쓰기</button> </a></span>
+                </div>
+            </div>
+
+            <table border="0">
+			    <thead>
+			        <tr>
+			            <th>제목</th>
+			            <th>작성자</th>
+			            <th>작성일</th>
+			            <th>좋아요</th>
+			        </tr>
+			    </thead>
+			    <tbody>
+			        <tr th:each="post : ${postsPage.content}">
+			            <td><a th:href="@{'/posts/' + ${post.id}}" th:text="${post.title}">제목</a></td>
+			            <td th:text="${post.user.username}">작성자</td>
+			            <td th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</td>
+			            <td th:text="${post.likeCount}">좋아요</td>
+			        </tr>
+			    </tbody>
+			</table>
+
+			<!-- 검색 & 페이지 이동 묶음 -->
+			<div class="bottom-bar">
+			  <div style="margin-bottom: 10px;">
+			    <input id="search" placeholder="검색" type="text">
+			    <button class="btn btn-default" id="searchBtn">
+			      <span class="glyphicon glyphicon-search"></span>
+			    </button>
+			  </div>
+			
+			  <div id="move">
+			    <a th:if="${currentPage > 0}" th:href="@{/posts(page=${currentPage - 1})}">이전</a>
+			    <span th:text="'페이지: ' + ${currentPage + 1}"></span>
+			    <a th:if="${postsPage.hasNext()}" th:href="@{/posts(page=${currentPage + 1})}">다음</a>
+			  </div>
+			</div>
+
+            
+
+        </div>
+    </section>
+    
+<br>
+<br><br><br><br> <!--임시 방편 -->
+<br>
+  <!--하단 관련정보-->
+    <footer class="container-fluid bg-3">
+        <h2 class="text-center">CONTACT</h2>
+        <div class="row">
+          <div class="col-sm-5">
+            <p>Contact us and we'll get back to you within 24 hours.</p>
+            <p><span class="glyphicon glyphicon-map-marker"></span> Cheongju, South Korea</p>
+            <p><span class="glyphicon glyphicon-phone"></span> +00 1515151515</p>
+            <p><span class="glyphicon glyphicon-envelope"></span> myemail@something.com</p>
+            <p><a href = "example.html">For detailed info, click here</a></p>
+          </div>
+          <div class="col-sm-7">
+            <div class="row">
+              <div class="col-sm-6 form-group">
+                <input class="form-control" id="name" name="name" placeholder="Name" type="text" required>
+              </div>
+              <div class="col-sm-6 form-group">
+                <input class="form-control" id="email" name="email" placeholder="Email" type="email" required>
+              </div>
+            </div>
+            <textarea class="form-control" id="comments" name="comments" placeholder="Comment" rows="5"></textarea><br>
+            <div class="row">
+              <div class="col-sm-12 form-group">
+                <button class="btn btn-default pull-right" type="submit">Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </footer>
+
+    <script>
+        document.getElementById("newPost").onclick = function() {
+            location.href = "newPost.html";
+        };
+
+
+    </script>
 
 
 </body>

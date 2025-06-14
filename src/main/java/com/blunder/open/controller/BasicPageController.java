@@ -54,8 +54,9 @@ public class BasicPageController {
     }
 
     @GetMapping("/practice")
-    public String showPracticePage(Model model) {
-        return "OpenPractice/OpeningPracticePage"; 
+    public String showPracticePage(Model model, HttpSession session) {
+
+        return "OpenPractice/OpeningPracticePage";
     }
 
 }

@@ -2,71 +2,212 @@
 <html>
 <head>
     <title th:text="${post.title}">게시글 상세</title>
+    
+    <link type = "text/css" rel="stylesheet" href="tempDesign.css">
+
+
+    <!-- 부트스트랩 코드-->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Montserrat" rel="stylesheet">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.7.1/jquery.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.1/js/bootstrap.min.js"></script>
+    
+    <style >
+    
+  footer {
+            background-color: #f2f2f2;
+  
+  }
+  
+  
+    
+    </style>
+    
+    
 </head>
 <body>
-<h1 th:text="${post.title}">제목</h1>
-<p>작성자: <span th:text="${post.user.username}">작성자</span></p>
-<p>작성일: <span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}">작성일</span></p>
-<div>
-    <h3>내용</h3>
-    <div th:utext="${post.content}">내용</div>
-</div>
 
-<div>
-    <h3>PGN</h3>
-    <pre th:text="${post.pgn}">PGN</pre>
-</div>
-
-<div>
-    <a th:if="${session.user != null and session.user.id == post.user.id}" th:href="@{'/posts/' + ${post.id} + '/edit'}">수정</a>
-    <form th:if="${session.user != null and session.user.id == post.user.id}" th:action="@{'/posts/' + ${post.id} + '/delete'}" method="post" onsubmit="return confirm('삭제하시겠습니까?');">
-        <button type="submit">삭제</button>
-    </form>
-</div>
-
-
-
-<form th:action="@{'/posts/' + ${post.id} + '/like'}" method="post">
-    <button type="submit">❤️ 좋아요 (<span th:text="${post.likeCount}">0</span>)</button>
-</form>
-
-
-
-<div>
-    <h2>댓글</h2>
-    
-    <div th:each="comment : ${comments}">
-        <p>
-            <strong th:text="${comment.user.username}">작성자</strong>:
-            <span th:text="${comment.content}">내용</span>
-        </p>
-        <p th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}"></p>
-
-        <!-- 삭제 버튼: 로그인 유저와 댓글 작성자가 같을 경우에만 표시 -->
-        <div th:if="${user != null and user.id == comment.user.id}">
-            <form th:action="@{'/posts/' + ${post.id} + '/comments/' + ${comment.id} + '/delete'}"
-                  method="post" style="display:inline;">
-                <button type="submit" onclick="return confirm('댓글을 삭제하시겠습니까?')">삭제</button>
-            </form>
+<!-- Navbar -->
+    <nav class="navbar navbar-default">
+        <div class="container">
+        <div class= "navbar-header ">
+            <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#myNavbar">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>                        
+            </button>
+            <a class="navbar-brand" th:href="(${user != null}) ? @{/home} : @{/guest}">OpenBlunder</a>
         </div>
 
-        <hr>
-    </div>
+        <!-- 로그인 회원가입 버튼 -->
+        <!-- 로그인 상태일 때 -->
+			<div class="buttons navbar-right" th:if="${user != null}">
+			  <ul class="nav navbar-nav" style="display: flex; align-items: center;">
+			    <li>
+			      <a th:href = "@{/profile}"><img th:src="@{/assets/{file}(file=${user.profilePhoto})}" style="height: 30px; width: 30px;"></a>
+			    </li>
+			    <li style="display: flex; align-items: center; margin-left: 10px;">
+			      <p style="margin: 0;">logined as: <span th:text="${user.username}"></span></p>
+			    </li>
+			    <li style="margin-left: 10px;">
+			      <a th:href="@{/logout}">Logout</a>
+			    </li>
+			  </ul>
+			</div>
+			
+			<!-- 비로그인 상태일 때 -->
+			<div class="buttons navbar-right" th:unless="${user != null}">
+			  <ul class="nav navbar-nav" style="display: flex; align-items: center;">
+			    <li><a th:href="@{/login}">Login</a></li>
+			    <li style="margin-left: 10px;">
+			      <form th:action="@{/signup}" method="get" style="margin: 0;">
+			        <button type="submit" class="btn btn-default" style="margin: 0; padding: 6px 12px;">회원가입</button>
+			      </form>
+			    </li>
+			  </ul>
+			</div>
 
-    <div th:if="${user != null}">
-        <form th:action="@{'/posts/' + ${post.id} + '/comments'}" method="post">
-            <textarea name="content" rows="3" cols="50" required></textarea><br>
-            <button type="submit">댓글 작성</button>
-        </form>
-    </div>
-    <div th:if="${user == null}">
-        <p><a th:href="@{/login}">로그인</a> 후 댓글을 작성할 수 있습니다.</p>
-    </div>
-</div>
+        <!-- 메뉴바 -->
+        <div class="collapse navbar-collapse navbar-right" id="myNavbar">
+            <ul class="nav navbar-nav">
+            	<li><a th:href="@{/posts}">게시판</a></li>
+                <li><a th:href="@{/practice}">블런더</a></li>
+                <li><a th:href="@{/quiz}">퀴즈</a></li>
+            </ul>
+        </div>
+        </div>
+    </nav>
 
 
+    <section class = "fluid-container " style="margin: auto; padding-top : 20px; width : 80%; 
+    height : 100%;  border-radius: 10px; border: 1px solid #c9c9c9; position: relative;">
+      
+        <div style ="display: flex; justify-content: space-between; align-items: center; padding: 5% 10% 0% 10%;">
+                <div id = "postName" href = "board.html">
+                    <span style = "font-size : 30px;" th:text="${post.title}"> </span>
+                </div>
+                <div id = "createInfo">
+                    <span id = "date"> Date : 
+                    	<span th:text="${#temporals.format(post.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+                    	</span>
+                    	<span> &nbsp;/&nbsp; </span>
+                    	<span id = "creater"> 게시글 작성자 : <span th:text="${post.user.username}">작성자</span>
+                     </span>
+                </div>
+        </div>
+        
+        <div style="padding: 0 10% 1% 10%; text-align:right" th:if="${user != null and user.id == post.user.id}">
+		    <a th:href="@{'/posts/' + ${post.id} + '/edit'}" class="btn btn-default">수정</a>
+		    <form th:action="@{'/posts/' + ${post.id} + '/delete'}" method="post" style="display: inline;" onsubmit="return confirm('삭제하시겠습니까?');">
+		        <button type="submit" class="btn btn-danger">삭제</button>
+		    </form>
+		</div>
+        
+        
+        <hr style = "width: 80%;  border: 1px solid #c9c9c9;">
 
-<a href="/posts">목록으로</a>
+        <div style = " padding : 0% 10% 5% 10%; ">
+            <p style = "font-size : 20px;"> 게시글 내용 </p>
+            <div th:utext="${post.content}">내용</div>
+        </div>
+            
+        <hr style = "width: 80%;  border: 1px solid #c9c9c9;">
+
+        <div class = "row"  style = "width: 100%; padding : 0% 10% 5% 12%">
+            	<div th:each="comment : ${comments}">
+            			<form th:if="${user != null and user.id == comment.user.id}"
+						              th:action="@{'/posts/' + ${post.id} + '/comments/' + ${comment.id} + '/delete'}"
+						              method="post" style="margin: 0;"> 
+					        <p>
+							    <strong th:text="${comment.user.username}">작성자</strong>:
+							    <span th:text="${comment.content}">내용</span>
+							
+							    <span style="float: right; display: flex; align-items: center; gap: 10px;">
+							    <span th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+							    <button type="submit" class="btn btn-default btn-sm"onclick="return confirm('댓글을 삭제하시겠습니까?')">삭제</button>
+							    </span>
+							    
+							    <div style = "display:inline-block"></div>
+							</p>
+				        </form>
+				
+				        <form th:if="${user == null or user.id != comment.user.id}"
+				        			th:action="@{'/posts/' + ${post.id} + '/comments/' + ${comment.id} + '/delete'}"
+						              method="post" style="margin: 0;"> 
+						              <p>
+							    <strong th:text="${comment.user.username}">작성자</strong>:
+							    <span th:text="${comment.content}">내용</span>
+							
+							    <span style="float: right; display: flex; align-items: center; gap: 10px;">
+							    	<span th:text="${#temporals.format(comment.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+							    </span>
+							    
+							    <div style = "display:inline-block"></div>
+							</p>
+				        </form>
+						
+				        <hr>
+				    </div>
+				
+				    <div th:if="${user != null}">
+				        <form th:action="@{'/posts/' + ${post.id} + '/comments'}" method="post">
+				            <textarea style = "width: 100%;" name="content" rows="3" cols="50" required></textarea><br>
+				            <div style="position: absolute; right: 10%;">
+               				 	<button type="submit">댓글 작성</button>
+            				</div>
+				        </form>
+				    </div>
+				    
+				    <form th:action="@{'/posts/' + ${post.id} + '/like'}" method="post">
+    					<button type="submit">❤️ 좋아요 (<span th:text="${post.likeCount}">0</span>)</button>
+					</form>
+					
+				    <div th:if="${user == null}">
+				        <p><a th:href="@{/login}">로그인</a> 후 댓글을 작성할 수 있습니다.</p>
+				    </div>
+				</div>
+            
+        </div>
+
+        <br><br>
+    
+    </section>
+
+
+    
+<br>
+<br><br><br><br> <!--임시 방편 -->
+<br>
+  <!--하단 관련정보-->
+    <footer class="container-fluid bg-3">
+        <h2 class="text-center">CONTACT</h2>
+        <div class="row">
+          <div class="col-sm-5">
+            <p>Contact us and we'll get back to you within 24 hours.</p>
+            <p><span class="glyphicon glyphicon-map-marker"></span> Cheongju, South Korea</p>
+            <p><span class="glyphicon glyphicon-phone"></span> +00 1515151515</p>
+            <p><span class="glyphicon glyphicon-envelope"></span> myemail@something.com</p>
+            <p><a href = "example.html">For detailed info, click here</a></p>
+          </div>
+          <div class="col-sm-7">
+            <div class="row">
+              <div class="col-sm-6 form-group">
+                <input class="form-control" id="name" name="name" placeholder="Name" type="text" required>
+              </div>
+              <div class="col-sm-6 form-group">
+                <input class="form-control" id="email" name="email" placeholder="Email" type="email" required>
+              </div>
+            </div>
+            <textarea class="form-control" id="comments" name="comments" placeholder="Comment" rows="5"></textarea><br>
+            <div class="row">
+              <div class="col-sm-12 form-group">
+                <button class="btn btn-default pull-right" type="submit">Send</button>
+              </div>
+            </div>
+          </div>
+        </div>
+    </footer>
 
 </body>
 </html>
